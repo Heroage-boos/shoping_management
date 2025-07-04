@@ -6,21 +6,76 @@
 @time: 2025/7/3 17:19
 @desc: 用户视图层
 """
-
-
 # 0.退出
 def sing_out():
-    print("退出功能!")
+    print("感谢使用，欢迎下次再来!")
+    #exit() 用于立即终止当前程序的运行。调用它后，程序会直接退出，不再执行后续代码。常用于用户选择退出时结束整个应用
     exit(0)
 
 # 1、注册功能
 def register():
-    print("注册功能!")
-    # 这里可以添加注册逻辑，比如输入用户名、密码等
-    username = input("请输入用户名: ")
-    password = input("请输入密码: ")
-    # 假设注册成功
-    print("用户 {username} 注册成功!")
+  print( "注册功能!" )
+  while True:
+      # 这里可以添加注册逻辑，比如输入用户名、密码等
+      username = input( "请输入用户名: " )
+      password = input( "请输入密码: " )
+      re_password = input( "请再次输入密码: " )
+      # strip() 方法用于移除字符串开头和结尾的所有空白字符（如空格、换行、制表符等）。在本行代码中，strip() 可以确保用户输入时无论前后是否有多余空格，都能正确处理输入内容。
+      is_register = input( "按任意键确认 /n退出 " ).strip().lower()
+
+      # 2.机型简单的逻辑判断
+      # 2.1 如果用户输入 'n'，则取消注册
+      if is_register == 'n':
+          print( "注册已取消!" )
+          break
+
+      # 2.2 判断密码是否一致
+      if password != re_password:
+          print( "两次输入的密码不一致，请重新输入!" )
+          continue
+
+      # 2.3 检验用户名是否合法
+      import re
+      if not re.findall( "^[a-zA-Z]\w{2,9}$", username ):
+          print( "用户名不合法! 必须以字母开头，长度为3-10个字符!" )
+          continue
+
+      # 2.4 检验密码强度  使用re 断言
+      if not re.findall( "^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,12}$", password ):
+          print( "密码强度不合格! 必须包含大小写字母和数字，长度为6-12个字符!" )
+          continue
+
+      # 3.查看用户名是否已经存在
+      import json
+      import os
+      from conf import settings
+      
+      print('settings.USER_DATA_DIR',settings.USER_DATA_DIR)
+      user_path=os.path.join(
+          settings.USER_DATA_DIR,f'{username}.json'  # 使用用户名作为文件名保存用户数据
+      )
+      # 3.1 如果存在，则让用户重新输入
+      if os.path.exists( user_path ):
+            print( f"用户名 {username} 已存在，请重新输入!" )
+            continue
+
+      # 3.2 如果不存在，则保存用户数据
+      user_data = {
+          'username': username,
+          'password': password,
+          "balance": 0,  # 初始余额为0
+          "shopping_card": [],  # 初始购物车为空
+          'flow': [],  # 初始流水记录为空
+          'is_admin': False,  # 初始不是管理员
+          'locked': False,  # 初始不锁定账号
+      }
+
+      with open( user_path, 'w', encoding='utf-8' ) as f:
+          json.dump(user_data, f, ensure_ascii=False) # 将用户数据保存到 JSON 文件中，确保中文字符正确显示
+
+      # 假设注册成功
+      print( f"用户 {username} 注册成功!" )
+      break
 
 # 2.登录功能
 def login():
@@ -150,11 +205,11 @@ func_dic={
 # 主程序
 def main():
     while True:
-        print("欢迎使用银行系统，请选择功能:")
-        for key, (desc, _) in func_dic.items():
-            print(f"{key}: {desc}")
+        print("欢迎使用购物管理系统，请选择功能:")
+        for num in func_dic:
+            print(f"{num}: {func_dic[num][0]}")  # 打印功能编号和名称
         choice = input("请输入功能编号: ").strip()
-        if choice in func_dic:
-            func_dic[choice][1]()  # 调用对应的函数
-        else:
-            print("无效的功能编号，请重新输入!")
+        if choice not in func_dic:
+            print( "无效的功能编号，请重新输入!" )
+            continue
+        func_dic[choice][1]()  # 调用对应的函数
