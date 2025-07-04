@@ -70,7 +70,7 @@ def register():
           'locked': False,  # 初始不锁定账号
       }
 
-      with open( user_path, 'w', encoding='utf-8' ) as f:
+      with open( user_path, 'w', encoding='utf-8-sig' ) as f:
           json.dump(user_data, f, ensure_ascii=False) # 将用户数据保存到 JSON 文件中，确保中文字符正确显示
 
       # 假设注册成功
