@@ -27,3 +27,6 @@ if not os.path.isdir(USER_DATA_DIR):
     USER_DATA_DIR = os.path.join( BASE_DIR, 'db', 'user_data' )
 
 print('USER_DATA_DIR',USER_DATA_DIR)
+
+# 获取配置文件中的银行利率
+RATE = config.getfloat('bank', 'RATE')

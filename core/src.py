@@ -140,9 +140,30 @@ def transfer():
 def withdraw():
     print("提现功能!")
     # 这里可以添加提现逻辑，比如输入提现金额等
-    amount = input("请输入提现金额: ")
-    # 假设提现成功
-    print(f"已成功提现 {amount} 元!")
+
+    while True:
+        # 1.这里可以添加提现逻辑，比如输入提现金额等
+        amount = input("请输入提现金额: ").strip()
+        is_withdraw = input( "按任意键确认 /n退出 " ).strip().lower()
+
+        # 2.取消充值操作
+        if is_withdraw == 'n':
+            break
+
+        # 3.提现校验
+        if not amount:  # 如果输入为空
+            print( "提现金额不能为空!" )
+            continue
+        # 检查金额是否是数字 和 金额小于100
+        if not amount.isdigit() or int( amount ) < 100:
+            print( "请输入有效的提现金额!" )
+            continue
+        # 4.调用接口提现
+        flag, msg = bank_interface.withdraw_interface( logged_user, int( amount ) )  # 调用充值接口
+        if flag:
+            print( msg )
+        else:
+            print( "充值失败，请稍后再试!" )
 
 # 6、查看余额
 @common.login_auth
