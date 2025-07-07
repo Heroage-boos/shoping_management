@@ -9,7 +9,6 @@
 
 from db import db_handler
 
-
 # 注册接口
 def register_interface(username,password,is_admin=False,balance=0):
     '''
