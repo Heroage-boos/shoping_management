@@ -4,7 +4,7 @@
 @project: PythonProject1
 @file: db_handler.py
 @time: 2025/7/4 10:27
-@desc: 数据处理层
+@desc: 数据处理层 bom
 """
 
 import json
@@ -12,7 +12,7 @@ import os
 from conf import settings
 
 
-#查询数据
+# 查询数据
 def select_data(username,data=True):
     """
     查询数据
@@ -34,3 +34,19 @@ def select_data(username,data=True):
     with open(user_path, 'rt', encoding='utf-8') as f:
         user_data = json.load(f)
         return user_data
+
+# 保存数据
+def save(user_data):
+    """
+    保存数据
+    :param user_data: 用户数据
+    :return: None
+    """
+    print(settings.USER_DATA_DIR)
+    #1.接收逻辑接口层传过来的user_data，并拼接处用户名.json文件的路径
+    user_path = os.path.join(settings.USER_DATA_DIR, f'{user_data["username"]}.json')  # 使用用户名作为文件名保存用户数据
+
+    #2.保存数据前
+    with open(user_path, 'wt', encoding='utf-8-sig') as f:
+        json.dump(user_data, f, ensure_ascii=False, indent=4)
+        return True

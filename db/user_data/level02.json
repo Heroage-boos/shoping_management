@@ -1,0 +1,9 @@
+﻿{
+    "username": "level02",
+    "password": "leveL02",
+    "balance": 0,
+    "shopping_card": [],
+    "flow": [],
+    "is_admin": false,
+    "locked": false
+}

@@ -41,41 +41,17 @@ def register():
           continue
 
       # 2.4 检验密码强度  使用re 断言
-      if not re.findall( "^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,12}$", password ):
-          print( "密码强度不合格! 必须包含大小写字母和数字，长度为6-12个字符!" )
-          continue
+      # if not re.findall( "^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,12}$", password ):
+      #     print( "密码强度不合格! 必须包含大小写字母和数字，长度为6-12个字符!" )
+      #     continue
 
-      # 3.查看用户名是否已经存在
-      import json
-      import os
-      from conf import settings
-      
-      print('settings.USER_DATA_DIR',settings.USER_DATA_DIR)
-      user_path=os.path.join(
-          settings.USER_DATA_DIR,f'{username}.json'  # 使用用户名作为文件名保存用户数据
-      )
-      # 3.1 如果存在，则让用户重新输入
-      if os.path.exists( user_path ):
-            print( f"用户名 {username} 已存在，请重新输入!" )
-            continue
-
-      # 3.2 如果不存在，则保存用户数据
-      user_data = {
-          'username': username,
-          'password': password,
-          "balance": 0,  # 初始余额为0
-          "shopping_card": [],  # 初始购物车为空
-          'flow': [],  # 初始流水记录为空
-          'is_admin': False,  # 初始不是管理员
-          'locked': False,  # 初始不锁定账号
-      }
-
-      with open( user_path, 'w', encoding='utf-8-sig' ) as f:
-          json.dump(user_data, f, ensure_ascii=False) # 将用户数据保存到 JSON 文件中，确保中文字符正确显示
-
-      # 假设注册成功
-      print( f"用户 {username} 注册成功!" )
-      break
+      #3. 调用注册接口进行注册
+      from interface import user_interface  # 导入用户接口层
+      flag,msg=user_interface.register_interface( username, password )
+      if flag:
+          print( msg )
+      else :
+          print( '\n注册失败，请稍后再试！' )
 
 # 2.登录功能
 def login():
