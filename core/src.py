@@ -6,7 +6,7 @@
 @time: 2025/7/3 17:19
 @desc: 用户视图层
 """
-from interface import user_interface  # 导入用户接口层
+from interface import user_interface,bank_interface  # 导入用户接口层
 from lib import common  # 导入公共方法库
 
 logged_user=None # 当前登录的用户数据
@@ -102,11 +102,29 @@ def login():
 # 3.充值功能
 @common.login_auth
 def recharge():
-    print("充值功能!")
-    # 这里可以添加充值逻辑，比如输入充值金额等
-    amount = input("请输入充值金额: ")
-    # 假设充值成功
-    print(f"已成功充值 {amount} 元!")
+    print( "充值功能!" )
+    while True:
+        # 1.这里可以添加充值逻辑，比如输入充值金额等
+        amount = input("请输入充值金额: ").strip()
+        is_recharge = input("按任意键确认 /n退出 ").strip().lower()
+
+        # 2.取消充值操作
+        if is_recharge == 'n':
+            break
+        # 3.充值校验
+        if not amount:  # 如果输入为空
+            print("充值金额不能为空!")
+            continue
+        # 检查金额是否是数字 和 大于0
+        if not amount.isdigit() or int(amount) <= 0:
+            print("请输入有效的充值金额!")
+            continue
+        # 4.调用接口充值
+        flag,msg= bank_interface.recharge_interface(logged_user, int(amount))  # 调用充值接口
+        if flag:
+            print(msg)
+        else:
+            print("充值失败，请稍后再试!")
 
 # 4、转账功能
 @common.login_auth

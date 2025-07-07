@@ -47,7 +47,7 @@ def save(user_data):
     #1.接收逻辑接口层传过来的user_data，并拼接处用户名.json文件的路径
     user_path = os.path.join(settings.USER_DATA_DIR, f'{user_data["username"]}.json')  # 使用用户名作为文件名保存用户数据
 
-    #2.保存数据前
+    #2.保存数据前  wt 模式会清空覆盖文件内容
     with open(user_path, 'wt', encoding='utf-8-sig') as f:
         json.dump(user_data, f, ensure_ascii=False, indent=4)
         return True
