@@ -7,11 +7,13 @@
 @desc: 用户视图层
 """
 from interface import user_interface  # 导入用户接口层
+from lib import common  # 导入公共方法库
 
 logged_user=None # 当前登录的用户数据
 logged_admin=False # 是否是管理员
 
 # 0.退出
+@common.login_auth
 def sing_out():
     print("感谢使用，欢迎下次再来!")
     #exit() 用于立即终止当前程序的运行。调用它后，程序会直接退出，不再执行后续代码。常用于用户选择退出时结束整个应用
@@ -50,7 +52,10 @@ def register():
       #     print( "密码强度不合格! 必须包含大小写字母和数字，长度为6-12个字符!" )
       #     continue
 
-      #3. 调用注册接口进行注册
+      # 3.做密码加密
+      password = common.pwd_to_sha256( password )
+
+      #4. 调用注册接口进行注册
       from interface import user_interface  # 导入用户接口层
       flag,msg=user_interface.register_interface( username, password )
       if flag:
@@ -65,13 +70,22 @@ def login():
         # 1.输入用户名、密码
         username = input( "请输入用户名: " ).strip()
         password = input( "请输入密码: " ).strip()
+        is_login=  input( "按任意键确认 /n退出 ").strip().lower()
 
-        # 2.校验是否存在此用户  不能直接调用视图层的接口，因为视图层是用户交互的界面，应该调用数据库处理层来查询数据
+        # 2.是否取消操作
+        if is_login == 'n':
+            print( "登录已取消!" )
+            break
+
+        # 3.做密码加密
+        password=common.pwd_to_sha256(password)
+
+        # 4.校验是否存在此用户  不能直接调用视图层的接口，因为视图层是用户交互的界面，应该调用数据库处理层来查询数据
         # from db import db_handler  # 导入数据库处理层
         # user_data = db_handler.select_data( username, data=False )
         flag, msg,is_admin= user_interface.login_interface( username, password )
 
-        # 3.存在此用户，调用登录接口进行登录
+        # 5.存在此用户，调用登录接口进行登录
         if flag:
             user_data = msg
             print( f"\n欢迎 {user_data.get('username')} 登录!" )
@@ -86,6 +100,7 @@ def login():
             print( msg )
 
 # 3.充值功能
+@common.login_auth
 def recharge():
     print("充值功能!")
     # 这里可以添加充值逻辑，比如输入充值金额等
@@ -94,6 +109,7 @@ def recharge():
     print(f"已成功充值 {amount} 元!")
 
 # 4、转账功能
+@common.login_auth
 def transfer():
     print("转账功能!")
     # 这里可以添加转账逻辑，比如输入转账金额和接收人等
@@ -111,6 +127,7 @@ def withdraw():
     print(f"已成功提现 {amount} 元!")
 
 # 6、查看余额
+@common.login_auth
 def check_balance():
     print("查看余额功能!")
     # 这里可以添加查看余额逻辑
@@ -119,6 +136,7 @@ def check_balance():
     print(f"您的当前余额为 {balance} 元!")
 
 # 7、查看流水
+@common.login_auth
 def check_flow():
     print("查看流水功能!")
     # 这里可以添加查看流水逻辑
@@ -133,6 +151,7 @@ def check_flow():
         print(record)
 
 # 8、购物功能
+@common.login_auth
 def shopping():
     print("购物功能!")
     # 这里可以添加购物逻辑，比如选择商品、添加到购物车等
@@ -142,6 +161,7 @@ def shopping():
     print(f"已成功购买 {quantity} 个 {product}!")
 
 # 9、查看购物车
+@common.login_auth
 def check_shop():
     print("查看购物车功能!")
     # 这里可以添加查看购物车逻辑
@@ -156,6 +176,7 @@ def check_shop():
         print(item)
 
 # 10、退出账号
+@common.login_auth
 def login_out():
    global logged_user,logged_admin
    print(f"\n{logged_user} 退出登录!")
@@ -163,6 +184,7 @@ def login_out():
    logged_admin=False
 
 # 11、管理员功能
+@common.login_auth
 def admin():
     print("管理员功能!")
     # 这里可以添加管理员逻辑，比如管理用户、查看统计等
@@ -183,7 +205,6 @@ def admin():
             print(f"{key}: {value}")
     else:
         print("无效的管理员操作!")
-
 
 # 函数字典
 func_dic={
