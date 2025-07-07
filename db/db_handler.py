@@ -30,8 +30,9 @@ def select_data(username,data=True):
     #3.判断接口层是否存在数据，不需要则返回True
     if not data:
         return True
+
     #4，如果存在，则打开文件，读取数据
-    with open(user_path, 'rt', encoding='utf-8') as f:
+    with open(user_path, 'rt', encoding='utf-8-sig') as f:
         user_data = json.load(f)
         return user_data
 

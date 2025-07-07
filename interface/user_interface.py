@@ -39,3 +39,17 @@ def register_interface(username,password,is_admin=False,balance=0):
     if flag:
         return True, f'\n用户: {username} 注册成功'
 
+# 登录接口
+def login_interface(username,password):
+    # 1.调用用户接口层，查询用户名是否存在
+    user_data = db_handler.select_data(username)
+    if not user_data:
+        return False, '\n用户名不存在，请重新输入用户名！'
+    # 2.判断密码是否正确
+    if not password == user_data.get('password'):
+        return False, '\n密码错误，请重新输入密码！'
+    # 3.判断账号是否被锁定
+    if user_data.get('locked'):
+        return False, '\n账号已被锁定，请联系管理员解锁！'
+    # 4.登录成功，返回用户数据
+    return True, user_data,user_data.get('is_admin')

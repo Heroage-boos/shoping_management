@@ -6,6 +6,11 @@
 @time: 2025/7/3 17:19
 @desc: 用户视图层
 """
+from interface import user_interface  # 导入用户接口层
+
+logged_user=None # 当前登录的用户数据
+logged_admin=False # 是否是管理员
+
 # 0.退出
 def sing_out():
     print("感谢使用，欢迎下次再来!")
@@ -56,11 +61,29 @@ def register():
 # 2.登录功能
 def login():
     print("登录功能!")
-    # 这里可以添加登录逻辑，比如输入用户名、密码等
-    username = input("请输入用户名: ")
-    password = input("请输入密码: ")
-    # 假设登录成功
-    print(f"用户 {username} 登录成功!")
+    while True:
+        # 1.输入用户名、密码
+        username = input( "请输入用户名: " ).strip()
+        password = input( "请输入密码: " ).strip()
+
+        # 2.校验是否存在此用户  不能直接调用视图层的接口，因为视图层是用户交互的界面，应该调用数据库处理层来查询数据
+        # from db import db_handler  # 导入数据库处理层
+        # user_data = db_handler.select_data( username, data=False )
+        flag, msg,is_admin= user_interface.login_interface( username, password )
+
+        # 3.存在此用户，调用登录接口进行登录
+        if flag:
+            user_data = msg
+            print( f"\n欢迎 {user_data.get('username')} 登录!" )
+
+            # 登录成功后，记录登录用户日志
+            global logged_user,logged_admin  #设置全局变量，后面判断用户是否是管理员
+            logged_user=user_data.get('username')
+            logged_admin=is_admin  # 是否是管理员
+            break
+
+        else:
+            print( msg )
 
 # 3.充值功能
 def recharge():
@@ -134,10 +157,10 @@ def check_shop():
 
 # 10、退出账号
 def login_out():
-    print("退出账号功能!")
-    # 这里可以添加退出账号逻辑
-    # 假设退出成功
-    print("已成功退出账号!")
+   global logged_user,logged_admin
+   print(f"\n{logged_user} 退出登录!")
+   logged_user=None
+   logged_admin=False
 
 # 11、管理员功能
 def admin():
