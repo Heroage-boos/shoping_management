@@ -11,7 +11,6 @@ import json
 import os
 from conf import settings
 
-
 # 查询数据
 def select_data(username,data=True):
     """
