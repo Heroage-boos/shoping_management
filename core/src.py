@@ -158,7 +158,6 @@ def transfer():
         # 假设转账成功
         print(msg)
 
-
 # 5、提现功能
 def withdraw():
     print("提现功能!")
@@ -196,21 +195,18 @@ def check_balance():
     flag,msg=bank_interface.balance_interface(logged_user)
     print(msg)
 
-
 # 7、查看流水
 @common.login_auth
 def check_flow():
     print("查看流水功能!")
-    # 这里可以添加查看流水逻辑
-    # 假设有一些流水记录
-    flow_records = [
-        "2025-07-01 充值 1000元",
-        "2025-07-02 转账 200元 到 用户A",
-        "2025-07-03 提现 300元"
-    ]
-    print("您的流水记录如下:")
-    for record in flow_records:
-        print(record)
+    # 1.调用接口查询流水
+    flag,msg,flow_list=bank_interface.check_flow_interface(logged_user)
+    if not flag:
+        print(msg)
+        return
+    for record in flow_list:
+        print( record )
+
 
 # 8、购物功能
 @common.login_auth
