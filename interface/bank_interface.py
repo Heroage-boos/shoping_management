@@ -22,6 +22,10 @@ def recharge_interface(username, amount):
     """
     user_data=db.db_handler.select_data(username)  # 确保用户数据存在
 
+    #  如果是登录用户充值user_data一定是有的，但管理员充值可以自定义充值人的名称，则可能不存在此用户，所以返回True
+    if not user_data:
+        return True
+
     # 1.更新用户余额
     user_data['balance'] += amount
 

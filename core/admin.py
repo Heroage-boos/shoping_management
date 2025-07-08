@@ -8,6 +8,7 @@
 """
 from core import src
 from interface import admin_interface
+from interface import bank_interface
 
 # 添加账户功能
 def add_user():
@@ -29,6 +30,11 @@ def lock_user():
         if is_lock=='y':
             break
 
+        # 不能自己冻结自己
+        if lock_username == src.logged_user:
+            print("不能冻结自己，请重新输入！")
+            continue
+
         # 3.调用冻结接口层冻结账户
         flag, msg=admin_interface.lock_user_interface(lock_username)
         print(msg)
@@ -37,7 +43,12 @@ def lock_user():
 
 # 给用户充值
 def recharge_to_user():
-  pass
+  while True:
+    # 1.获取要充值的账户名
+    recharge_username = input("请输入要充值的账户名: ").strip()
+
+    # 2.获取充值金额
+    src.recharge(recharge_username)
 
 func_dic = {
     '0': ('退出管理员',),  # 退出管理员功能

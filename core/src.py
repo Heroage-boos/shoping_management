@@ -101,7 +101,7 @@ def login():
 
 # 3.充值功能
 @common.login_auth
-def recharge():
+def recharge(username=False):
     print( "充值功能!" )
     while True:
         # 1.这里可以添加充值逻辑，比如输入充值金额等
@@ -119,8 +119,13 @@ def recharge():
         if not amount.isdigit() or int(amount) <= 0:
             print("请输入有效的充值金额!")
             continue
+
+        # 3.1 如果没有传入用户名，则使用当前登录用户
+        if not username :
+            username=logged_user
+
         # 4.调用接口充值
-        flag,msg= bank_interface.recharge_interface(logged_user, int(amount))  # 调用充值接口
+        flag,msg= bank_interface.recharge_interface(username, int(amount))  # 调用充值接口
         if flag:
             print(msg)
         else:
