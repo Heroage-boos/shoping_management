@@ -244,6 +244,7 @@ def login_out():
 # 11、管理员功能
 @common.login_auth
 def admin():
+
     print("管理员功能!")
     # 这里可以添加管理员逻辑，比如管理用户、查看统计等
     from core import admin
@@ -270,9 +271,16 @@ def main():
     while True:
         print("欢迎使用购物管理系统，请选择功能:")
         for num in func_dic:
-            print(f"{num}: {func_dic[num][0]}")  # 打印功能编号和名称
+            if logged_admin :
+                print(f"{num}: {func_dic[num][0]}")  # 打印功能编号和名称
+            else :
+                if num not in ['11']:
+                     print(f"{num}: {func_dic[num][0]}")
         choice = input("请输入功能编号: ").strip()
-        if choice not in func_dic:
+
+        #
+        if choice not in func_dic or (not logged_admin and choice in ['11']):
             print( "无效的功能编号，请重新输入!" )
             continue
+
         func_dic[choice][1]()  # 调用对应的函数

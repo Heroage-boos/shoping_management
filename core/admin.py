@@ -7,6 +7,7 @@
 @desc: 管理员视图层
 """
 from core import src
+from interface import admin_interface
 
 # 添加账户功能
 def add_user():
@@ -19,7 +20,20 @@ def add_user():
 
 # 冻结账户功能
 def lock_user():
-    pass
+    while True:
+        # 1.获取要冻结的账户名
+        lock_username = input("请输入要冻结/解冻的账户名: ").strip()
+        is_lock = input("是否确认冻结该账户？(y/n): ").strip().lower()
+
+        # 2.判断用户是否想要退出
+        if is_lock=='y':
+            break
+
+        # 3.调用冻结接口层冻结账户
+        flag, msg=admin_interface.lock_user_interface(lock_username)
+        print(msg)
+        if flag:
+            break
 
 # 给用户充值
 def recharge_to_user():
@@ -28,7 +42,7 @@ def recharge_to_user():
 func_dic = {
     '0': ('退出管理员',),  # 退出管理员功能
     '1': ('添加账户功能', add_user),
-    '2': ('冻结账户功能', lock_user),
+    '2': ('冻结/解冻账户功能', lock_user),
     '3': ('给用户充值', recharge_to_user),
 }
 
