@@ -52,3 +52,16 @@ def withdraw_interface(username, amount):
     db_handler.save(user_data)
 
     return True, f"提现成功，当前余额为: {user_data['balance']}"
+
+#余额查新
+def balance_interface(username):
+    """
+    余额查询接口
+    :param username: 用户名
+    :return: (bool, str) 返回查询结果和提示信息
+    """
+    # 1. 获取用户数据
+    user_data = db_handler.select_data(username)  # 确保用户数据存在
+
+    # 2.返回余额信息
+    return True, f"当前余额为: {user_data['balance']}"

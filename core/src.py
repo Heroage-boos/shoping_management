@@ -169,10 +169,10 @@ def withdraw():
 @common.login_auth
 def check_balance():
     print("查看余额功能!")
-    # 这里可以添加查看余额逻辑
-    # 假设余额为1000元
-    balance = 1000
-    print(f"您的当前余额为 {balance} 元!")
+    # 1.调用接口查询余额
+    flag,msg=bank_interface.balance_interface(logged_user)
+    print(msg)
+
 
 # 7、查看流水
 @common.login_auth
