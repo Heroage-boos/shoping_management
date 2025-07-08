@@ -130,11 +130,34 @@ def recharge():
 @common.login_auth
 def transfer():
     print("转账功能!")
-    # 这里可以添加转账逻辑，比如输入转账金额和接收人等
-    amount = input("请输入转账金额: ")
-    recipient = input("请输入接收人用户名: ")
-    # 假设转账成功
-    print(f"已成功向 {recipient} 转账 {amount} 元!")
+    while True:
+        # 这里可以添加转账逻辑，比如输入转账金额和接收人等
+        amount = input( "请输入转账金额: " ).strip()
+        recipient = input( "请输入接收人用户名: " ).strip()
+        is_transfer = input( "按任意键确认 /n退出 " ).strip().lower()
+        # 2.取消转账操作
+        if is_transfer == 'n':
+            break
+
+        # 3.其他转账校验规则
+        if(amount.isdigit() or int(amount) <= 0):
+            print( "转账金额不能为空或小于等于0!" )
+            continue
+
+        if not recipient:
+            print( "接收人用户名不能为空!" )
+            continue
+
+        if recipient == logged_user:
+            print( "不能向自己转账!" )
+            continue
+
+        # 4.调用接口进行转账
+        flag,msg=bank_interface.transfer_interface(logged_user, recipient, int(amount))  # 调用转账接口
+
+        # 假设转账成功
+        print(msg)
+
 
 # 5、提现功能
 def withdraw():

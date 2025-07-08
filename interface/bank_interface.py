@@ -65,3 +65,36 @@ def balance_interface(username):
 
     # 2.返回余额信息
     return True, f"当前余额为: {user_data['balance']}"
+
+# 转账
+def transfer_interface(sender, recipient, amount):
+    """
+    转账接口
+    :param sender: 发送者用户名
+    :param recipient: 接收者用户名
+    :param amount: 转账金额
+    :return: (bool, str) 返回转账结果和提示信息
+    """
+    # 1. 获取发送者数据
+    sender_data = db_handler.select_data(sender)
+    if not sender_data:
+        return False, "发送者不存在"
+
+    # 2. 获取接收者数据
+    recipient_data = db_handler.select_data(recipient)
+    if not recipient_data:
+        return False, "接收者不存在"
+
+    # 3. 检查余额是否充足
+    if amount > sender_data['balance']:
+        return False, "余额不足，无法转账"
+
+    # 4. 扣除发送者余额并增加接收者余额
+    sender_data['balance'] -= amount
+    recipient_data['balance'] += amount
+
+    # 5. 保存修改后的用户数据
+    db_handler.save(sender_data)
+    db_handler.save(recipient_data)
+
+    return True, f"转账成功，{sender} 当前余额为: {sender_data['balance']}, {recipient} 当前余额为: {recipient_data['balance']}"
