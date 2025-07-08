@@ -20,7 +20,7 @@ def sing_out():
     exit(0)
 
 # 1、注册功能
-def register():
+def register(is_admin=False):
   print( "注册功能!" )
   while True:
       # 这里可以添加注册逻辑，比如输入用户名、密码等
@@ -57,7 +57,7 @@ def register():
 
       #4. 调用注册接口进行注册
       from interface import user_interface  # 导入用户接口层
-      flag,msg=user_interface.register_interface( username, password )
+      flag,msg=user_interface.register_interface( username, password ,is_admin)
       if flag:
           print( msg )
       else :
@@ -83,7 +83,7 @@ def login():
         # 4.校验是否存在此用户  不能直接调用视图层的接口，因为视图层是用户交互的界面，应该调用数据库处理层来查询数据
         # from db import db_handler  # 导入数据库处理层
         # user_data = db_handler.select_data( username, data=False )
-        flag, msg,is_admin= user_interface.login_interface( username, password )
+        flag, msg,is_admin = user_interface.login_interface( username, password )
 
         # 5.存在此用户，调用登录接口进行登录
         if flag:
@@ -246,23 +246,8 @@ def login_out():
 def admin():
     print("管理员功能!")
     # 这里可以添加管理员逻辑，比如管理用户、查看统计等
-    action = input("请输入管理员操作 (1: 查看用户, 2: 查看统计): ")
-    if action == "1":
-        print("查看用户功能!")
-        # 假设有一些用户记录
-        users = ["用户A", "用户B", "用户C"]
-        print("当前用户列表:")
-        for user in users:
-            print(user)
-    elif action == "2":
-        print("查看统计功能!")
-        # 假设有一些统计数据
-        stats = {"总用户数": 100, "总交易额": 50000}
-        print("系统统计数据:")
-        for key, value in stats.items():
-            print(f"{key}: {value}")
-    else:
-        print("无效的管理员操作!")
+    from core import admin
+    admin.main()
 
 # 函数字典
 func_dic={
