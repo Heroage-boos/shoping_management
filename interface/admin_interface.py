@@ -27,6 +27,8 @@ def lock_user_interface(username):
         user_data['locked'] = False
         return True, f'\n用户: {username} 已解冻'
 
+
+
     # 3.保存冻结状态到数据库
     user_data['locked'] = True
     flag= db_handler.save(user_data)
