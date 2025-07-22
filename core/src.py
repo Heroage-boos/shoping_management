@@ -6,7 +6,7 @@
 @time: 2025/7/3 17:19
 @desc: 用户视图层
 """
-from interface import user_interface,bank_interface  # 导入用户接口层
+from interface import user_interface,bank_interface,shop_interface  # 导入用户接口层
 from lib import common  # 导入公共方法库
 
 logged_user=None # 当前登录的用户数据
@@ -217,11 +217,82 @@ def check_flow():
 @common.login_auth
 def shopping():
     print("购物功能!")
-    # 这里可以添加购物逻辑，比如选择商品、添加到购物车等
-    product = input("请输入要购买的商品名称: ")
-    quantity = input("请输入购买数量: ")
-    # 假设购物成功
-    print(f"已成功购买 {quantity} 个 {product}!")
+
+    #初始化购物车
+    shopping_cart = {}  # 用于存储用户选择的商品  {'韭菜':{"number": "F00002","name":"鸡蛋","price": 4.00}}
+
+    # 1.调用接口层，获取商品数据
+    flag,msg=shop_interface.check_goods_interface("goods")  # 商品数据存储在 "goods" 中)
+    if not flag:
+        print(msg)
+        return
+    while True:
+        print( "欢迎来到红龙商城".center( 50, "-" ) )
+        goods_list = msg  # 商品数据是一个列表
+        print( f"{'序号':<10},{'商品编号':<10},{'商品名称':<10},{'商品价格':<10}" )
+
+        for index,good in enumerate(goods_list):
+            print( f"{index+1:<10},{good.get('number'):<10},{good.get('name'):<10},{good.get('price'):<10}" )
+
+        print( "欢迎来到红龙商城".center( 50, "-" ) )
+
+        opt=input("请选择商品序号(y结算/n退出): ").strip()
+
+        # 如果opt等于n，调用添加购物车接口，把购物车数据写入文件
+        if opt == 'n':
+            if not shopping_cart:
+                break
+            flag,msg=shop_interface.add_shopping_cart_interface(logged_user, shopping_cart)  # 调用添加购物车接口
+            print(msg)
+            if flag:
+                break
+
+        #如果用户输入y，调用结算接口
+        if opt == 'y':
+            if not shopping_cart:
+                print("购物车为空，请先选择商品!")
+                continue
+            # 结算逻辑可以在这里实现
+            shop_interface.close_account_interface(logged_user, shopping_cart)  #调用结算接口
+            break
+
+        #3.校验规则
+        if not opt.isdigit() or int(opt) <= 0:
+            print("请输入正确的序号")
+            continue
+        #4.判断用户输入的序号是否在商品列表范围内
+        opt=int(opt) -1
+        if opt not in list(range(len(goods_list))):
+            print("无效的商品序号，请重新输入!")
+            continue
+        # 5. 获取用户选择的商品信息
+        good_info =goods_list[opt]
+        name =good_info.get('name')
+
+        # 6.把商品信息添加到用户的购物车
+        #6.1 判断购物车是否存在相同的商品
+        if name not in shopping_cart:
+           good_info['数量']=1
+           shopping_cart[name] = good_info
+
+        else:
+           #6.2 如果存在相同的商品，则数量加1
+           shopping_cart[name]['数量'] += 1
+
+        print("")
+        print( f"{'序号':<10},{'商品编号':<10},{'商品名称':<10},{'商品价格':<10},{'商品总价':<10}" )
+        for index, good in enumerate( goods_list ):
+            print(
+                f"{index + 1:<10},{good.get( 'number' ):<10},{good.get( 'name' ):<10},{good.get( 'price' ):<10},{good.get( 'price' ) * good_info['数量']:<10}" )
+
+
+        #1） 让用户继续选择商品
+
+        #2） 让永户选择结算
+
+        #3）用户不想结算，退出购物功能，将选择的商品信息添加到购物车里面
+
+
 
 # 9、查看购物车
 @common.login_auth

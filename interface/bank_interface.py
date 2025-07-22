@@ -136,3 +136,26 @@ def check_flow_interface(username):
         return False, "没有流水记录",[]
 
     return True,"", user_data['flow']  # 返回流水记录列表
+
+# 支付接口
+def pay_interface(username,total):
+    # 1.拿到用户数据
+    user_data = db_handler.select_data(username)
+
+    # 2, 判断用户余额是否充足
+    if user_data.get('balance') < total :
+        return False,f'\n {username}余额不足，支付:{total}元，失败'
+
+    # 3.支付
+    user_data['balance'] -=total
+
+    # 4.添加流水记录
+    msg=(f"\n{datetime.now()} 用户 ：{username} ,消费：{total} 元'"
+         f"当前余额为：{user_data.get('balance')}")
+    user_data['flow'].append(msg)
+
+    # 5.保存用户数据
+    db.db_handler.save(user_data)
+
+    return True, f"\n{username}支付成功，当前余额为：{user_data.get('balance')}元"
+
